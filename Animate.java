@@ -41,14 +41,28 @@ public class Animate
         ArrayList<Point> diagonals = new ArrayList<>();
 
         // From the leftmost to right most point, fill in the gaps for +y and -y.
-        for(int x = -(pointsOnCircumference[3].x) + 1; x < pointsOnCircumference[1].x; x++)
+        for(int x = pointsOnCircumference[3].x + 1; x < pointsOnCircumference[1].x; x++)
         {
-
+            // If the x value is less than the x coordinate of the northern vertex then one diagonal decrementing and one incrementing y.
+            if(x < pointsOnCircumference[0].x)
+            {
+                diagonals.add(new Point(x, pointsOnCircumference[3].y += 1));
+                diagonals.add(new Point(x, pointsOnCircumference[3].y -= 1));
+            }
+            else
+            {
+                diagonals.add(new Point(x, pointsOnCircumference[0].y += 1));
+                diagonals.add(new Point(x, pointsOnCircumference[0].y -= 1));
+            }
         }
 
         for(Point p : pointsOnCircumference)
         {
             setCell(p);
+        }
+        for(Point d : diagonals)
+        {
+            setCell(d);
         }
 
         frameCount++;
@@ -67,20 +81,22 @@ public class Animate
             // Dependent on which vertex of the circle we are looking at, increment the position of the point in that direction
             switch(i) {
                 case Direction.NORTH:
-                    pointsOnCircumference[i] = new Point(currPoint.x, currPoint.y--);
+                    currPoint.move(0, -1);
                     break;
                 case Direction.SOUTH:
-                    pointsOnCircumference[i] = new Point(currPoint.x, currPoint.y++);
+                    currPoint.move(0, 1);
                     break;
                 case Direction.EAST:
-                    pointsOnCircumference[i] = new Point(currPoint.x++, currPoint.y);
+                    currPoint.move(1, 0);
                     break;
                 case Direction.WEST:
-                    pointsOnCircumference[i] = new Point(currPoint.x--, currPoint.y);
+                    currPoint.move(-1, 0);
                     break;
                 default:
                     break;
             }
+
+            pointsOnCircumference[i] = currPoint;
         }
 
         return pointsOnCircumference;
@@ -98,5 +114,4 @@ public class Animate
         static final int SOUTH = 2;
         static final int WEST = 3;
     }
-
 }
