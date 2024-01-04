@@ -8,7 +8,7 @@ public class Animate
 {
     Maze maze;
     int frameCount = 0;
-    private static final int ANIMATION_FRAMES = 64;
+    private static final int ANIMATION_FRAMES = 15;
     private Point center;
 
     // Maze must be set to a blank maze beforehand with size 16, 16
@@ -19,7 +19,12 @@ public class Animate
         center = new Point(maze.getWidth() / 2, maze.getHeight() / 2);
 
         // Initially called with all 4 points at the center, that way, the calculated vertices will be N, E, S and W of the origin position.
-        doAnimation(getPointVertices(new Point[] { center, center, center, center }));
+        doAnimation(new Point[] { center, center, center, center });
+    }
+
+    public void reset()
+    {
+        this.frameCount = 0;
     }
 
     private void setCell(Point point)
@@ -29,13 +34,17 @@ public class Animate
 
     private void doAnimation(Point[] oldPointsOnCircumference)
     {
+        Point[] pointsOnCircumference = new Point[4];
         // Start with a central circle by setting the square at half of the width and height of the maze to be an active cell. Execute this only on the first frame.
         if(frameCount == 0)
         {
             setCell(center);
         }
+        else
+        {
+            pointsOnCircumference = getPointVertices(oldPointsOnCircumference);
+        }
 
-        Point[] pointsOnCircumference = getPointVertices(oldPointsOnCircumference);
         // Now we have the vertices, fill in the gaps diagonally until we reach another vertex.
 
         ArrayList<Point> diagonals = new ArrayList<>();
@@ -60,7 +69,7 @@ public class Animate
         for(int i = Direction.NORTH; i <= Direction.WEST; i++)
         {
             // Gets the old location from last frame
-            Point currPoint = oldPointsOnCircumference[i];
+            Point currPoint = (Point)oldPointsOnCircumference[i].clone();
 
             // Dependent on which vertex of the circle we are looking at, increment the position of the point in that direction
             switch(i) {
